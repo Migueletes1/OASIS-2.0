@@ -20,3 +20,35 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+
+    # Apps principales
+    path('users/', include('users.urls', namespace='users')),
+    path('companies/', include('companies.urls', namespace='companies')),
+    path('apprentices/', include('apprentices.urls', namespace='apprentices')),
+    path('instructors/', include('instructors.urls', namespace='instructors')),
+    path('projects/', include('projects.urls', namespace='projects')),
+    path('assignments/', include('assignments.urls', namespace='assignments')),
+    path('progress/', include('progress_tracking.urls', namespace='progress')),
+    path('evaluations/', include('evaluations.urls', namespace='evaluations')),
+    path('notifications/', include('notifications.urls', namespace='notifications')),
+    path('attachments/', include('project_attachments.urls', namespace='attachments')),
+    path('knowledge/', include('knowledge_areas.urls', namespace='knowledge')),
+    path('reports/', include('reports.urls', namespace='reports')),
+    path('system/', include('system_config.urls', namespace='system')),
+    path('help/', include('help.urls', namespace='help')),
+    path('backup/', include('backups.urls', namespace='backup')),
+    path('audit/', include('audit_logs.urls', namespace='audit')),
+    path('global/', include('global.urls', namespace='global')),   # Errores, páginas generales, landing page
+]
+
+# Archivos estáticos y media en desarrollo
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
