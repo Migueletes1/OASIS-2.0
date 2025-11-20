@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Detalle de aprendiz{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="h3 mb-1">{{ apprentice.full_name }}</h1>
+        <p class="text-muted mb-0">Documento: {{ apprentice.document_type }} {{ apprentice.document_number }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" href="{% url 'apprentices:list' %}">Volver</a>
+        <a class="btn btn-primary" href="{% url 'apprentices:edit' apprentice.pk %}">Editar</a>
+    </div>
+</div>
+
+<div class="row mt-3 g-3">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Información general</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Correo</dt>
+                    <dd class="col-sm-8">{{ apprentice.email }}</dd>
+                    <dt class="col-sm-4">Teléfono</dt>
+                    <dd class="col-sm-8">{{ apprentice.phone|default:"-" }}</dd>
+                    <dt class="col-sm-4">Programa</dt>
+                    <dd class="col-sm-8">{{ apprentice.program }}</dd>
+                    <dt class="col-sm-4">Estado</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge text-bg-{{ apprentice.status == 'active'|yesno:'success,secondary' }}">
+                            {{ apprentice.get_status_display }}
+                        </span>
+                    </dd>
+                    <dt class="col-sm-4">Registrado</dt>
+                    <dd class="col-sm-8">{{ apprentice.created_at|date:"d/m/Y H:i" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Notas</h2>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-0">Aquí puedes mostrar proyectos asignados, evaluaciones u observaciones adicionales.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Detalle de asignación{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="h3 mb-1">{{ assignment.project.title }}</h1>
+        <p class="text-muted mb-0">Empresa: {{ assignment.company.name }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" href="{% url 'assignments:list' %}">Volver</a>
+        <a class="btn btn-primary" href="{% url 'assignments:edit' assignment.pk %}">Editar</a>
+    </div>
+</div>
+
+<div class="row mt-3 g-3">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Información principal</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Instructor</dt>
+                    <dd class="col-sm-8">{{ assignment.instructor.full_name|default:"Sin asignar" }}</dd>
+                    <dt class="col-sm-4">Estado</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge text-bg-{{ assignment.status == 'active'|yesno:'success,secondary' }}">
+                            {{ assignment.get_status_display }}
+                        </span>
+                    </dd>
+                    <dt class="col-sm-4">Fecha</dt>
+                    <dd class="col-sm-8">{{ assignment.created_at|date:"d/m/Y" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Aprendices asignados</h2>
+            </div>
+            <div class="card-body">
+                {% if assignment.apprentices.all %}
+                    <ul class="list-unstyled mb-0">
+                        {% for apprentice in assignment.apprentices.all %}
+                            <li class="mb-1"><i class="bi bi-person"></i> {{ apprentice.fullname|default:apprentice.username }}</li>
+                        {% empty %}
+                            <li class="text-muted">Sin aprendices asociados.</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h2 class="h5 mb-0">Descripción</h2>
+    </div>
+    <div class="card-body">
+        <p class="mb-0">{{ assignment.description|default:"Sin descripción" }}</p>
+    </div>
+</div>
+{% endblock %}

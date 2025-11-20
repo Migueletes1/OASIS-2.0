@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Detalle de auditoría{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="h3 mb-1">Evento en {{ log.module }}</h1>
+        <p class="text-muted mb-0">Registrado el {{ log.created_at|date:"d/m/Y H:i" }}</p>
+    </div>
+    <a class="btn btn-outline-secondary" href="{% url 'audit:audit_list' %}">Volver</a>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h2 class="h5 mb-0">Detalles</h2>
+    </div>
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Usuario</dt>
+            <dd class="col-sm-9">{{ log.user.get_full_name|default:log.user|default:"Sistema" }}</dd>
+            <dt class="col-sm-3">Acción</dt>
+            <dd class="col-sm-9">{{ log.get_action_display }}</dd>
+            <dt class="col-sm-3">Módulo</dt>
+            <dd class="col-sm-9">{{ log.module }}</dd>
+            <dt class="col-sm-3">IP</dt>
+            <dd class="col-sm-9">{{ log.ip_address|default:"No registrada" }}</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h2 class="h5 mb-0">Descripción</h2>
+    </div>
+    <div class="card-body">
+        <p class="mb-0">{{ log.description }}</p>
+    </div>
+</div>
+{% endblock %}

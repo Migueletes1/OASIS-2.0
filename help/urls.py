@@ -1,0 +1,11 @@
+from django.urls import path
+
+from . import views
+
+app_name = "help"
+
+urlpatterns = [
+    path("", views.help_index, name="index"),
+    path("faq/", views.help_faq, name="faq"),
+    path("guides/", views.help_guides, name="guides"),
+]

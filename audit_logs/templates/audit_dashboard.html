@@ -1,0 +1,113 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Dashboard de Auditoría{% endblock %}
+{% block dashboard_title %}Dashboard de Auditoría{% endblock %}
+{% block dashboard_subtitle %}Resumen de eventos del sistema{% endblock %}
+
+{% block dashboard_content %}
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <p class="text-muted mb-1">Total de eventos</p>
+                <h2 class="fw-bold">{{ stats.total|default:0 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <p class="text-muted mb-1">Módulo con más actividad</p>
+                <h2 class="h5 mb-0">{% with stats.by_module|first as top_module %}{{ top_module.module|default:"-" }}{% endwith %}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <p class="text-muted mb-1">Acción más frecuente</p>
+                <h2 class="h5 mb-0">{% with stats.by_action|first as top_action %}{{ top_action.action|default:"-" }}{% endwith %}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mt-2">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h2 class="h6 mb-0">Eventos por acción</h2>
+            </div>
+            <div class="card-body">
+                {% if stats.by_action %}
+                    <ul class="list-group list-group-flush">
+                        {% for item in stats.by_action %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ item.action }}
+                                <span class="badge text-bg-primary">{{ item.count }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted mb-0">Sin datos disponibles.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h2 class="h6 mb-0">Eventos por módulo</h2>
+            </div>
+            <div class="card-body">
+                {% if stats.by_module %}
+                    <ul class="list-group list-group-flush">
+                        {% for item in stats.by_module %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ item.module }}
+                                <span class="badge text-bg-secondary">{{ item.count }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted mb-0">Sin datos disponibles.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="h6 mb-0">Eventos recientes</h2>
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'audit:audit_list' %}">Ver todos</a>
+    </div>
+    <div class="card-body">
+        {% if recent %}
+            <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Módulo</th>
+                            <th>Acción</th>
+                            <th>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in recent %}
+                            <tr>
+                                <td>{{ log.created_at|date:"d/m/Y H:i" }}</td>
+                                <td>{{ log.module }}</td>
+                                <td>{{ log.get_action_display }}</td>
+                                <td>{{ log.user.get_full_name|default:log.user }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">No hay eventos recientes.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

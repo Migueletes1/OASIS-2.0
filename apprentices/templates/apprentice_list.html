@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Aprendices{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="h3 mb-1">Listado de aprendices</h1>
+        <p class="text-muted mb-0">Gestiona todos los aprendices registrados.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'apprentices:create' %}">
+        <i class="bi bi-plus-circle"></i> Nuevo aprendiz
+    </a>
+</div>
+
+<div class="card mt-3">
+    <div class="card-body">
+        {% if apprentices %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Programa</th>
+                            <th>Estado</th>
+                            <th>Registrado</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for apprentice in apprentices %}
+                            <tr>
+                                <td>{{ apprentice.full_name }}</td>
+                                <td>{{ apprentice.program }}</td>
+                                <td>
+                                    <span class="badge text-bg-{{ apprentice.status == 'active'|yesno:'success,secondary' }}">
+                                        {{ apprentice.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>{{ apprentice.created_at|date:"d/m/Y" }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'apprentices:detail' apprentice.pk %}" class="btn btn-sm btn-outline-primary">Ver</a>
+                                    <a href="{% url 'apprentices:edit' apprentice.pk %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="mb-0 text-center text-muted">No hay aprendices registrados.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Dashboard de asignaciones{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <p class="text-muted mb-1">Total asignaciones</p>
+                <h2 class="fw-bold">{{ stats.total|default:0 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <p class="text-muted mb-1">Activas</p>
+                <h2 class="fw-bold text-success">{{ stats.active|default:0 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <p class="text-muted mb-1">Finalizadas</p>
+                <h2 class="fw-bold text-primary">{{ stats.finished|default:0 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <p class="text-muted mb-1">Canceladas</p>
+                <h2 class="fw-bold text-danger">{{ stats.cancelled|default:0 }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h2 class="h5 mb-0">Asignaciones recientes</h2>
+    </div>
+    <div class="card-body">
+        {% if recent_assignments %}
+            <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th>Proyecto</th>
+                            <th>Instructor</th>
+                            <th>Aprendices</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for assignment in recent_assignments %}
+                            <tr>
+                                <td>{{ assignment.project.title }}</td>
+                                <td>{{ assignment.instructor.full_name|default:"-" }}</td>
+                                <td>{{ assignment.apprentices.count }}</td>
+                                <td>{{ assignment.get_status_display }}</td>
+                                <td>{{ assignment.created_at|date:"d/m/Y" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">No hay asignaciones recientes.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

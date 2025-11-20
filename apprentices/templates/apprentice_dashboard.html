@@ -1,0 +1,63 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Dashboard de aprendices{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <p class="text-muted mb-1">Total aprendices</p>
+                <h2 class="fw-bold">{{ stats.total|default:0 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <p class="text-muted mb-1">Activos</p>
+                <h2 class="fw-bold text-success">{{ stats.active|default:0 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <p class="text-muted mb-1">Inactivos</p>
+                <h2 class="fw-bold text-secondary">{{ stats.inactive|default:0 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <p laclass="text-muted mb-1">Suspendidos</p>
+                <h2 class="fw-bold text-warning">{{ stats.suspended|default:0 }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">Programas destacados</h2>
+        <a href="{% url 'apprentices:program_list' %}" class="btn btn-sm btn-outline-primary">Ver todos</a>
+    </div>
+    <div class="card-body">
+        {% if highlighted_programs %}
+            <div class="row g-3">
+                {% for program in highlighted_programs %}
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <h3 class="h6 mb-1">{{ program.name }}</h3>
+                            <p class="text-muted mb-2">Duración: {{ program.duration_months }} meses</p>
+                            <p class="mb-0 small">Nivel: {{ program.level }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">No hay programas destacados.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

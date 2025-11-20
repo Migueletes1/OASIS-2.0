@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}OASIS — Plataforma Integral{% endblock %}
+
+{% block content %}
+<section class="py-5 text-center bg-light rounded-4">
+    <h1 class="display-5 fw-bold">Bienvenido a OASIS</h1>
+    <p class="lead text-muted mb-4">Gestiona aprendices, proyectos, empresas y evaluaciones desde un solo lugar.</p>
+    <div class="d-flex justify-content-center gap-3">
+        <a class="btn btn-primary btn-lg" href="{% url 'users:login' %}">Iniciar sesión</a>
+        <a class="btn btn-outline-secondary btn-lg" href="{% url 'users:register' %}">Crear cuenta</a>
+    </div>
+</section>
+
+<section class="row g-3 mt-4">
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">Aprendices</h2>
+                <p class="text-muted">Registra y acompaña el progreso académico y empresarial.</p>
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'apprentices:list' %}">Ir al módulo</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">Proyectos</h2>
+                <p class="text-muted">Centraliza la información de los proyectos activos y finalizados.</p>
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'projects:project_list' %}">Ver proyectos</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">Empresas</h2>
+                <p class="text-muted">Gestiona las empresas aliadas y aprueba sus solicitudes.</p>
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'companies:company_list' %}">Ver empresas</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">Evaluaciones</h2>
+                <p class="text-muted">Monitorea el desempeño de aprendices e instructores.</p>
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'evaluations:evaluation_list' %}">Ir a evaluaciones</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="card mt-4 shadow-sm">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="h4">Seguimiento inteligente</h2>
+                <p class="text-muted mb-0">Consulta dashboards, reportes y notificaciones en tiempo real para tomar decisiones informadas.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a class="btn btn-primary" href="{% url 'progress:progress_dashboard' %}">Ver dashboard</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

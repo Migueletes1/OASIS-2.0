@@ -1,0 +1,26 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'landing' %}">OASIS</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="{% url 'projects:project_list' %}">Proyectos</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'apprentices:list' %}">Aprendices</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'companies:company_list' %}">Empresas</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'assignments:list' %}">Asignaciones</a></li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'notifications:notification_center' %}"><i class="bi bi-bell"></i></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'users:profile' %}">{{ user.get_full_name|default:user.username }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'users:logout' %}">Salir</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'users:login' %}">Ingresar</a></li>
+                    <li class="nav-item"><a class="btn btn-light btn-sm" href="{% url 'users:register' %}">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

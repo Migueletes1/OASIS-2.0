@@ -24,11 +24,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from importlib import import_module
+
+global_views = import_module("global.views")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Apps principales
+    path('', global_views.landing_page, name='landing'),
     path('users/', include('users.urls', namespace='users')),
     path('companies/', include('companies.urls', namespace='companies')),
     path('apprentices/', include('apprentices.urls', namespace='apprentices')),
