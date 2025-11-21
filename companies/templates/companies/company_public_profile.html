@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Perfil de {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
+                    <div class="flex-shrink-0">
+                        {% if company.logo %}
+                            <img src="{{ company.logo.url }}" alt="Logo {{ company.name }}" class="rounded" style="width: 96px; height: 96px; object-fit: contain;">
+                        {% else %}
+                            <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 96px; height: 96px;">
+                                <span class="text-muted">Sin logo</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h1 class="h3 mb-1">{{ company.name }}</h1>
+                        <p class="mb-0 text-muted">{{ company.sector }} · Registrada el {{ company.created_at|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+
+                <p class="lead">{{ company.description|default:"Esta empresa aún no ha agregado una descripción detallada." }}</p>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 h-100">
+                            <h2 class="h6 text-uppercase text-muted">Contacto</h2>
+                            <ul class="list-unstyled mb-0">
+                                <li><strong>Correo:</strong> <a href="mailto:{{ company.email }}">{{ company.email }}</a></li>
+                                <li><strong>Teléfono:</strong> {{ company.phone|default:"No disponible" }}</li>
+                                <li><strong>Dirección:</strong> {{ company.address|default:"No disponible" }}</li>
+                                <li><strong>Sitio web:</strong>
+                                    {% if company.website %}
+                                        <a href="{{ company.website }}" target="_blank" rel="noopener">{{ company.website }}</a>
+                                    {% else %}
+                                        No disponible
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 h-100">
+                            <h2 class="h6 text-uppercase text-muted">Resumen</h2>
+                            <p class="mb-0">Esta empresa forma parte del ecosistema OASIS y colabora con aprendices en proyectos reales. Si estás interesado en trabajar con esta organización, revisa sus proyectos activos y postúlate cuando estén disponibles.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h2 class="h5">Proyectos recientes</h2>
+                    {% with company.projects.all|slice:":3" as public_projects %}
+                        {% if public_projects %}
+                            <div class="list-group">
+                                {% for project in public_projects %}
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h3 class="h6 mb-1">{{ project.title }}</h3>
+                                                <p class="mb-0 text-muted">{{ project.start_date|date:"d/m/Y" }} · {{ project.get_status_display|default:project.status }}</p>
+                                            </div>
+                                            <span class="badge text-bg-secondary">{{ project.apprentices.count }} aprendices</span>
+                                        </div>
+                                        <p class="mb-0 mt-2 small text-muted">{{ project.description|truncatewords:30 }}</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No hay proyectos públicos disponibles.</p>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

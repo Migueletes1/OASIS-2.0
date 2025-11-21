@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Dashboard {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <div>
+        <h1 class="h3 mb-1">Dashboard · {{ company.name }}</h1>
+        <p class="text-muted mb-0">Resumen ejecutivo y métricas clave de la empresa.</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-outline-secondary" href="{% url 'companies:company_detail' company.pk %}">Ver perfil</a>
+        <a class="btn btn-outline-primary" href="{% url 'companies:company_projects' company.pk %}">Ver proyectos</a>
+        <a class="btn btn-primary" href="{% url 'companies:company_project_create' company.pk %}">
+            <i class="bi bi-plus-circle"></i> Nuevo proyecto
+        </a>
+    </div>
+</div>
+
+<div class="row g-3 mt-1">
+    <div class="col-12 col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-uppercase text-muted small mb-1">Total proyectos</p>
+                <p class="display-6 fw-semibold mb-0">{{ projects_total }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-uppercase text-muted small mb-1">En progreso</p>
+                <p class="display-6 fw-semibold text-warning mb-0">{{ projects_active }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-uppercase text-muted small mb-1">Completados</p>
+                <p class="display-6 fw-semibold text-success mb-0">{{ projects_completed }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mt-3">
+    <div class="col-12 col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Información de contacto</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Correo</dt>
+                    <dd class="col-sm-8"><a href="mailto:{{ company.email }}">{{ company.email }}</a></dd>
+                    <dt class="col-sm-4">Teléfono</dt>
+                    <dd class="col-sm-8">{{ company.phone|default:"No registrado" }}</dd>
+                    <dt class="col-sm-4">Dirección</dt>
+                    <dd class="col-sm-8">{{ company.address|default:"No registrada" }}</dd>
+                    <dt class="col-sm-4">Sitio web</dt>
+                    <dd class="col-sm-8">
+                        {% if company.website %}
+                            <a href="{{ company.website }}" target="_blank" rel="noopener">{{ company.website }}</a>
+                        {% else %}
+                            <span class="text-muted">Sin sitio web</span>
+                        {% endif %}
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Estado de aprobación</h2>
+            </div>
+            <div class="card-body d-flex flex-column justify-content-center text-center">
+                {% if company.is_approved %}
+                    <span class="badge text-bg-success mb-2">Empresa aprobada</span>
+                    <p class="mb-0">La empresa está habilitada para colaborar y recibir aprendices.</p>
+                {% else %}
+                    <span class="badge text-bg-secondary mb-2">Pendiente de aprobación</span>
+                    <p class="mb-0">Aún no se ha aprobado la empresa. Revisa la información antes de habilitarla.</p>
+                {% endif %}
+                <div class="d-flex gap-2 justify-content-center mt-3">
+                    {% if company.is_approved %}
+                        <form action="{% url 'companies:company_reject' company.pk %}" method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-danger" type="submit">Rechazar</button>
+                        </form>
+                    {% else %}
+                        <form action="{% url 'companies:company_approve' company.pk %}" method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-success" type="submit">Aprobar empresa</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">Últimos proyectos</h2>
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'companies:company_projects' company.pk %}">Gestionar proyectos</a>
+    </div>
+    <div class="card-body">
+        {% with company.projects.all|slice:":5" as dashboard_projects %}
+            {% if dashboard_projects %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Estado</th>
+                                <th>Inicio</th>
+                                <th>Aprendices</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for project in dashboard_projects %}
+                                <tr>
+                                    <td>{{ project.title }}</td>
+                                    <td>
+                                        {% if project.status == 'completed' %}
+                                            <span class="badge text-bg-success">Completado</span>
+                                        {% elif project.status == 'in_progress' %}
+                                            <span class="badge text-bg-warning text-dark">En progreso</span>
+                                        {% elif project.status == 'cancelled' %}
+                                            <span class="badge text-bg-danger">Cancelado</span>
+                                        {% else %}
+                                            <span class="badge text-bg-secondary">Pendiente</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ project.start_date|date:"d/m/Y" }}</td>
+                                    <td>{{ project.apprentices.count }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="mb-0 text-muted">La empresa aún no tiene proyectos registrados.</p>
+            {% endif %}
+        {% endwith %}
+    </div>
+</div>
+{% endblock %}

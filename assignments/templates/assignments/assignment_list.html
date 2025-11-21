@@ -33,9 +33,11 @@
                                 <td>{{ assignment.instructor.full_name|default:"-" }}</td>
                                 <td>{{ assignment.apprentices.count }}</td>
                                 <td>
-                                    <span class="badge text-bg-{{ assignment.status == 'active'|yesno:'success,secondary' }}">
-                                        {{ assignment.get_status_display }}
-                                    </span>
+                                    {% if assignment.status == 'active' %}
+                                        <span class="badge text-bg-success">{{ assignment.get_status_display }}</span>
+                                    {% else %}
+                                        <span class="badge text-bg-secondary">{{ assignment.get_status_display }}</span>
+                                    {% endif %}
                                 </td>
                                 <td class="text-end">
                                     <a class="btn btn-sm btn-outline-primary" href="{% url 'assignments:detail' assignment.pk %}">Ver</a>

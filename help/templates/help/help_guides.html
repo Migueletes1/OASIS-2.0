@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Guías paso a paso{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="h3 mb-1">Guías paso a paso</h1>
+    <p class="text-muted mb-0">Sigue estas instrucciones para completar tareas comunes dentro de OASIS.</p>
+</div>
+
+<div class="row g-3 mt-2">
+    {% for guide in guides %}
+        <div class="col-12 col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h5">{{ guide.title }}</h2>
+                    <ol class="mt-3 mb-0">
+                        {% for step in guide.steps %}
+                            <li class="mb-2">{{ step }}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-center text-muted">No hay guías disponibles.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}{% if form.instance.pk %}Editar empresa{% else %}Nueva empresa{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="h3 mb-1">{% if form.instance.pk %}Editar empresa{% else %}Registrar empresa{% endif %}</h1>
+        <p class="text-muted mb-0">Completa la información requerida para la empresa.</p>
+    </div>
+    <a class="btn btn-outline-secondary" href="{% url 'companies:company_list' %}">Volver al listado</a>
+</div>
+
+<div class="card mt-3">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" for="{{ form.name.id_for_label }}">Nombre de la empresa</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}<div class="invalid-feedback d-block">{{ form.name.errors|join:', ' }}</div>{% endif %}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="{{ form.nit.id_for_label }}">NIT</label>
+                    {{ form.nit }}
+                    {% if form.nit.errors %}<div class="invalid-feedback d-block">{{ form.nit.errors|join:', ' }}</div>{% endif %}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="{{ form.email.id_for_label }}">Correo</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}<div class="invalid-feedback d-block">{{ form.email.errors|join:', ' }}</div>{% endif %}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="{{ form.phone.id_for_label }}">Teléfono</label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}<div class="invalid-feedback d-block">{{ form.phone.errors|join:', ' }}</div>{% endif %}
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label" for="{{ form.address.id_for_label }}">Dirección</label>
+                    {{ form.address }}
+                    {% if form.address.errors %}<div class="invalid-feedback d-block">{{ form.address.errors|join:', ' }}</div>{% endif %}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="{{ form.sector.id_for_label }}">Sector</label>
+                    {{ form.sector }}
+                    {% if form.sector.errors %}<div class="invalid-feedback d-block">{{ form.sector.errors|join:', ' }}</div>{% endif %}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="{{ form.website.id_for_label }}">Sitio web</label>
+                    {{ form.website }}
+                    {% if form.website.errors %}<div class="invalid-feedback d-block">{{ form.website.errors|join:', ' }}</div>{% endif %}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="{{ form.logo.id_for_label }}">Logo</label>
+                    {{ form.logo }}
+                    {% if form.logo.errors %}<div class="invalid-feedback d-block">{{ form.logo.errors|join:', ' }}</div>{% endif %}
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="{{ form.description.id_for_label }}">Descripción</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}<div class="invalid-feedback d-block">{{ form.description.errors|join:', ' }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a class="btn btn-outline-secondary" href="{% url 'companies:company_list' %}">Cancelar</a>
+                <button class="btn btn-primary" type="submit">
+                    {% if form.instance.pk %}
+                        <i class="bi bi-save"></i> Guardar cambios
+                    {% else %}
+                        <i class="bi bi-plus-circle"></i> Registrar empresa
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

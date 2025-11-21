@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Proyectos · {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <div>
+        <h1 class="h3 mb-1">Proyectos de {{ company.name }}</h1>
+        <p class="text-muted mb-0">Listado de iniciativas asociadas a la empresa.</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-outline-secondary" href="{% url 'companies:company_detail' company.pk %}">Volver al perfil</a>
+        <a class="btn btn-primary" href="{% url 'companies:company_project_create' company.pk %}">
+            <i class="bi bi-plus-circle"></i> Nuevo proyecto
+        </a>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-body">
+        {% if projects %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Estado</th>
+                            <th>Inicio</th>
+                            <th>Fin</th>
+                            <th>Aprendices</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project in projects %}
+                            <tr>
+                                <td>{{ project.title }}</td>
+                                <td>
+                                    {% if project.status == 'completed' %}
+                                        <span class="badge text-bg-success">Completado</span>
+                                    {% elif project.status == 'in_progress' %}
+                                        <span class="badge text-bg-warning text-dark">En progreso</span>
+                                    {% elif project.status == 'cancelled' %}
+                                        <span class="badge text-bg-danger">Cancelado</span>
+                                    {% else %}
+                                        <span class="badge text-bg-secondary">Pendiente</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ project.start_date|date:"d/m/Y" }}</td>
+                                <td>{{ project.end_date|date:"d/m/Y"|default:"-" }}</td>
+                                <td>{{ project.apprentices.count }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="mb-0 text-center text-muted">La empresa aún no tiene proyectos registrados.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

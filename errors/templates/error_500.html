@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Error interno{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <div class="display-1 fw-bold text-warning">500</div>
+    <h1 class="h3 mt-3">Algo salió mal en el servidor</h1>
+    <p class="text-muted">Nuestro equipo ya fue notificado. Intenta nuevamente en unos minutos.</p>
+    <div class="d-flex flex-column flex-md-row justify-content-center gap-2 mt-4">
+        <a class="btn btn-primary" href="{% url 'landing' %}">
+            <i class="bi bi-arrow-clockwise"></i> Volver al inicio
+        </a>
+        <a class="btn btn-outline-secondary" href="javascript:location.reload()">
+            <i class="bi bi-arrow-repeat"></i> Reintentar
+        </a>
+    </div>
+</div>
+{% endblock %}

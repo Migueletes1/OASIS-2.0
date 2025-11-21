@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Editar evaluación{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="h3 mb-1">Editar evaluación</h1>
+        <p class="text-muted mb-0">Modifica los datos registrados para {{ evaluation.apprentice.get_full_name|default:evaluation.apprentice }}.</p>
+    </div>
+    <a class="btn btn-outline-secondary" href="{% url 'evaluations:evaluation_detail' evaluation.pk %}">Volver</a>
+</div>
+
+<div class="card mt-3">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="row g-3">
+                {% for field in form %}
+                    <div class="col-md-6">
+                        <label class="form-label" for="id_{{ field.name }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="text-muted d-block">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="text-danger small">{{ field.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="mt-4 d-flex gap-2">
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-save"></i> Guardar cambios
+                </button>
+                <a class="btn btn-light" href="{% url 'evaluations:evaluation_detail' evaluation.pk %}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

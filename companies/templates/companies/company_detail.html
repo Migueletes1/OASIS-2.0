@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}{{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="h3 mb-1">{{ company.name }}</h1>
+        <p class="text-muted mb-0">NIT {{ company.nit }} · {{ company.sector }}</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-outline-secondary" href="{% url 'companies:company_list' %}">Volver</a>
+        <a class="btn btn-outline-primary" href="{% url 'companies:company_edit' company.pk %}">Editar</a>
+        <a class="btn btn-outline-dark" href="{% url 'companies:company_dashboard' company.pk %}">Dashboard</a>
+        <a class="btn btn-outline-success" href="{% url 'companies:company_projects' company.pk %}">Proyectos</a>
+        <a class="btn btn-primary" href="{% url 'companies:company_project_create' company.pk %}">
+            <i class="bi bi-plus-circle"></i> Nuevo proyecto
+        </a>
+    </div>
+</div>
+
+<div class="row g-3 mt-3">
+    <div class="col-12 col-lg-8">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="h5 mb-0">Información general</h2>
+                {% if company.is_approved %}
+                    <span class="badge text-bg-success">Aprobada</span>
+                {% else %}
+                    <span class="badge text-bg-secondary">Pendiente</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">NIT</dt>
+                    <dd class="col-sm-8">{{ company.nit }}</dd>
+                    <dt class="col-sm-4">Sector</dt>
+                    <dd class="col-sm-8">{{ company.sector }}</dd>
+                    <dt class="col-sm-4">Correo</dt>
+                    <dd class="col-sm-8">
+                        {% if company.email %}
+                            <a href="mailto:{{ company.email }}">{{ company.email }}</a>
+                        {% else %}-{% endif %}
+                    </dd>
+                    <dt class="col-sm-4">Teléfono</dt>
+                    <dd class="col-sm-8">{{ company.phone|default:"No registrado" }}</dd>
+                    <dt class="col-sm-4">Dirección</dt>
+                    <dd class="col-sm-8">{{ company.address|default:"No registrada" }}</dd>
+                    <dt class="col-sm-4">Sitio web</dt>
+                    <dd class="col-sm-8">
+                        {% if company.website %}
+                            <a href="{{ company.website }}" target="_blank" rel="noopener">{{ company.website }}</a>
+                        {% else %}-{% endif %}
+                    </dd>
+                    <dt class="col-sm-4">Registrada</dt>
+                    <dd class="col-sm-8">{{ company.created_at|date:"d/m/Y" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Logo</h2>
+            </div>
+            <div class="card-body text-center">
+                {% if company.logo %}
+                    <img src="{{ company.logo.url }}" alt="Logo de {{ company.name }}" class="img-fluid" style="max-height: 160px; object-fit: contain;">
+                {% else %}
+                    <div class="text-muted">Sin logo cargado.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h2 class="h5 mb-0">Descripción</h2>
+    </div>
+    <div class="card-body">
+        <p class="mb-0">{{ company.description|default:"No se ha agregado descripción." }}</p>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">Actividad reciente</h2>
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'companies:company_projects' company.pk %}">Ver todos</a>
+    </div>
+    <div class="card-body">
+        {% with company.projects.all|slice:":5" as latest_projects %}
+            {% if latest_projects %}
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Proyecto</th>
+                                <th>Estado</th>
+                                <th>Inicio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for project in latest_projects %}
+                                <tr>
+                                    <td>{{ project.title }}</td>
+                                    <td>
+                                        {% if project.status == 'completed' %}
+                                            <span class="badge text-bg-success">Completado</span>
+                                        {% elif project.status == 'in_progress' %}
+                                            <span class="badge text-bg-warning text-dark">En progreso</span>
+                                        {% elif project.status == 'cancelled' %}
+                                            <span class="badge text-bg-danger">Cancelado</span>
+                                        {% else %}
+                                            <span class="badge text-bg-secondary">Pendiente</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ project.start_date|date:"d/m/Y" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="mb-0 text-muted">Aún no hay proyectos asociados.</p>
+            {% endif %}
+        {% endwith %}
+    </div>
+</div>
+
+<div class="d-flex flex-wrap gap-2 mt-4">
+    {% if company.is_approved %}
+        <form action="{% url 'companies:company_reject' company.pk %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-outline-danger" type="submit">Rechazar</button>
+        </form>
+    {% else %}
+        <form action="{% url 'companies:company_approve' company.pk %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-success" type="submit">Aprobar</button>
+        </form>
+    {% endif %}
+    <a class="btn btn-outline-danger" href="{% url 'companies:company_delete' company.pk %}">Eliminar</a>
+</div>
+{% endblock %}

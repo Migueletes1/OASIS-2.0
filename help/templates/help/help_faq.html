@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Preguntas frecuentes{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="h3 mb-1">Preguntas frecuentes</h1>
+    <p class="text-muted mb-0">Resuelve dudas comunes sobre el uso de la plataforma.</p>
+</div>
+
+<div class="accordion mt-3" id="faqAccordion">
+    {% for faq in faqs %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="faq-heading-{{ forloop.counter }}">
+                <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#faq-collapse-{{ forloop.counter }}">
+                    {{ faq.question }}
+                </button>
+            </h2>
+            <div id="faq-collapse-{{ forloop.counter }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    {{ faq.answer }}
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-center text-muted">No hay preguntas frecuentes registradas.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Detalle de evaluación{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="h3 mb-1">Evaluación de {{ evaluation.apprentice.get_full_name|default:evaluation.apprentice }}</h1>
+        <p class="text-muted mb-0">Proyecto: {{ evaluation.project.title }}</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-outline-secondary" href="{% url 'evaluations:evaluation_list' %}">Volver</a>
+        <a class="btn btn-outline-primary" href="{% url 'evaluations:evaluation_edit' evaluation.pk %}">Editar</a>
+    </div>
+</div>
+
+<div class="row g-3 mt-2">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Información general</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Proyecto</dt>
+                    <dd class="col-sm-8">{{ evaluation.project.title }}</dd>
+                    <dt class="col-sm-4">Aprendiz</dt>
+                    <dd class="col-sm-8">{{ evaluation.apprentice.get_full_name|default:evaluation.apprentice }}</dd>
+                    <dt class="col-sm-4">Evaluador</dt>
+                    <dd class="col-sm-8">{{ evaluation.evaluator.get_full_name|default:evaluation.evaluator|default:"Sin asignar" }}</dd>
+                    <dt class="col-sm-4">Puntaje</dt>
+                    <dd class="col-sm-8"><strong>{{ evaluation.score }}</strong> / 100</dd>
+                    <dt class="col-sm-4">Estado</dt>
+                    <dd class="col-sm-8">{{ evaluation.get_status_display }}</dd>
+                    <dt class="col-sm-4">Registrada</dt>
+                    <dd class="col-sm-8">{{ evaluation.created_at|date:"d/m/Y H:i" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Observaciones</h2>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">{{ evaluation.observations|default:"Sin observaciones registradas." }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if evaluation.report_file %}
+<div class="card mt-3">
+    <div class="card-body d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="h6 mb-1">Archivo adjunto</h2>
+            <p class="text-muted mb-0">Descarga el reporte asociado a esta evaluación.</p>
+        </div>
+        <a class="btn btn-outline-primary" href="{{ evaluation.report_file.url }}" download>
+            <i class="bi bi-download"></i> Descargar
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

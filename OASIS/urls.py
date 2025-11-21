@@ -33,6 +33,7 @@ urlpatterns = [
 
     # Apps principales
     path('', global_views.landing_page, name='landing'),
+    path('accounts/', include('django.contrib.auth.urls')),
     path('users/', include('users.urls', namespace='users')),
     path('companies/', include('companies.urls', namespace='companies')),
     path('apprentices/', include('apprentices.urls', namespace='apprentices')),

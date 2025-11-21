@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Dashboard de evaluaciones{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="h3 mb-1">Dashboard de evaluaciones</h1>
+        <p class="text-muted mb-0">Resumen general del estado de las evaluaciones registradas.</p>
+    </div>
+    <a class="btn btn-outline-secondary" href="{% url 'evaluations:evaluation_list' %}">Volver al listado</a>
+</div>
+
+<div class="row g-3 mt-2">
+    <div class="col-6 col-md-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted text-uppercase small mb-1">Total</p>
+                <p class="display-6 fw-semibold mb-0">{{ totals.total }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted text-uppercase small mb-1">Pendientes</p>
+                <p class="display-6 fw-semibold text-secondary mb-0">{{ totals.pending }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted text-uppercase small mb-1">Aprobadas</p>
+                <p class="display-6 fw-semibold text-success mb-0">{{ totals.approved }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted text-uppercase small mb-1">Completadas</p>
+                <p class="display-6 fw-semibold text-primary mb-0">{{ totals.completed }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">Promedios por proyecto</h2>
+        <small class="text-muted">Basado en evaluaciones registradas</small>
+    </div>
+    <div class="card-body">
+        {% if average_scores %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Proyecto</th>
+                            <th>Evaluaciones</th>
+                            <th>Promedio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in average_scores %}
+                            <tr>
+                                <td>{{ item.project__title }}</td>
+                                <td>{{ item.evaluations }}</td>
+                                <td>{{ item.avg_score|floatformat:1 }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-center text-muted mb-0">No hay datos suficientes para mostrar promedios.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
