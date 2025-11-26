@@ -5,12 +5,21 @@
 <section class="py-5 text-center bg-light rounded-4">
     <h1 class="display-5 fw-bold">Bienvenido a OASIS</h1>
     <p class="lead text-muted mb-4">Gestiona aprendices, proyectos, empresas y evaluaciones desde un solo lugar.</p>
+
+    {% if not user.is_authenticated %}
     <div class="d-flex justify-content-center gap-3">
         <a class="btn btn-primary btn-lg" href="{% url 'users:login' %}">Iniciar sesión</a>
         <a class="btn btn-outline-secondary btn-lg" href="{% url 'users:register' %}">Crear cuenta</a>
     </div>
+    {% else %}
+    <div class="d-flex justify-content-center gap-3">
+        <a class="btn btn-success btn-lg" href="{% url 'users:dashboard' %}">Ir a mi Dashboard</a>
+    </div>
+    {% endif %}
 </section>
 
+{% if user.is_authenticated %}
+<!-- SECCIÓN PARA USUARIOS AUTENTICADOS: ACCESO A MÓDULOS -->
 <section class="row g-3 mt-4">
     <div class="col-md-3">
         <div class="card h-100 shadow-sm">
@@ -44,7 +53,8 @@
             <div class="card-body">
                 <h2 class="h5">Evaluaciones</h2>
                 <p class="text-muted">Monitorea el desempeño de aprendices e instructores.</p>
-                <a class="btn btn-sm btn-outline-primary" href="{% url 'evaluations:evaluation_list' %}">Ir a evaluaciones</a>
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'evaluations:evaluation_list' %}">Ir a
+                    evaluaciones</a>
             </div>
         </div>
     </div>
@@ -55,7 +65,8 @@
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h2 class="h4">Seguimiento inteligente</h2>
-                <p class="text-muted mb-0">Consulta dashboards, reportes y notificaciones en tiempo real para tomar decisiones informadas.</p>
+                <p class="text-muted mb-0">Consulta dashboards, reportes y notificaciones en tiempo real para tomar
+                    decisiones informadas.</p>
             </div>
             <div class="col-md-4 text-md-end">
                 <a class="btn btn-primary" href="{% url 'progress:progress_dashboard' %}">Ver dashboard</a>
@@ -63,4 +74,53 @@
         </div>
     </div>
 </section>
+
+{% else %}
+<!-- SECCIÓN PARA VISITANTES: CARACTERÍSTICAS (SIN LINKS) -->
+<section class="row g-3 mt-4">
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm border-0 bg-white">
+            <div class="card-body text-center">
+                <div class="mb-3 text-primary"><i class="bi bi-people-fill fs-1"></i></div>
+                <h2 class="h5 fw-bold">Gestión de Aprendices</h2>
+                <p class="text-muted small">Seguimiento detallado del proceso formativo y productivo de cada aprendiz.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm border-0 bg-white">
+            <div class="card-body text-center">
+                <div class="mb-3 text-success"><i class="bi bi-kanban fs-1"></i></div>
+                <h2 class="h5 fw-bold">Control de Proyectos</h2>
+                <p class="text-muted small">Administración centralizada de proyectos, hitos y entregables.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm border-0 bg-white">
+            <div class="card-body text-center">
+                <div class="mb-3 text-warning"><i class="bi bi-building fs-1"></i></div>
+                <h2 class="h5 fw-bold">Alianzas Empresariales</h2>
+                <p class="text-muted small">Conexión directa con el sector productivo para prácticas y empleo.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm border-0 bg-white">
+            <div class="card-body text-center">
+                <div class="mb-3 text-info"><i class="bi bi-clipboard-data fs-1"></i></div>
+                <h2 class="h5 fw-bold">Evaluaciones 360</h2>
+                <p class="text-muted small">Sistema integral de evaluación para instructores y aprendices.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mt-5 text-center">
+    <h3 class="fw-bold mb-3">¿Listo para empezar?</h3>
+    <p class="text-muted">Únete a la plataforma líder en gestión educativa.</p>
+    <a href="{% url 'users:register' %}" class="btn btn-primary px-4 py-2 fw-bold rounded-pill">Registrarse Ahora</a>
+</section>
+{% endif %}
 {% endblock %}

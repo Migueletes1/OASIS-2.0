@@ -1,0 +1,113 @@
+{% extends "global/base.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-4 bg-primary text-white">
+                <div class="card-body p-5">
+                    <h1 class="fw-bold display-5">¡Hola, {{ user.fullname }}!</h1>
+                    <p class="lead mb-0">Bienvenido a tu panel de control. Aquí puedes gestionar tus actividades.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Tarjeta de Perfil -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-primary">
+                        <i class="bi bi-person-circle display-4"></i>
+                    </div>
+                    <h4 class="fw-bold">Mi Perfil</h4>
+                    <p class="text-muted">Consulta y actualiza tu información personal.</p>
+                    <a href="{% url 'users:profile' %}" class="btn btn-outline-primary fw-bold stretched-link">Ir al
+                        Perfil</a>
+                </div>
+            </div>
+        </div>
+
+        {% if user.role == 'empresa' %}
+        <!-- Opciones para Empresa -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-building display-4"></i>
+                    </div>
+                    <h4 class="fw-bold">Mis Empresas</h4>
+                    <p class="text-muted">Gestiona la información de tus empresas asociadas.</p>
+                    <a href="#" class="btn btn-outline-success fw-bold stretched-link">Gestionar</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if user.role == 'instructor' %}
+        <!-- Opciones para Instructor -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-journal-bookmark display-4"></i>
+                    </div>
+                    <h4 class="fw-bold">Mis Cursos</h4>
+                    <p class="text-muted">Administra tus cursos y asignaciones.</p>
+                    <a href="#" class="btn btn-outline-warning fw-bold stretched-link">Ver Cursos</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if user.role == 'aprendiz' %}
+        <!-- Opciones para Aprendiz -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-info">
+                        <i class="bi bi-mortarboard display-4"></i>
+                    </div>
+                    <h4 class="fw-bold">Mi Aprendizaje</h4>
+                    <p class="text-muted">Revisa tu progreso y tareas pendientes.</p>
+                    <a href="#" class="btn btn-outline-info fw-bold stretched-link">Ver Progreso</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if user.is_admin %}
+        <!-- Opciones para Admin -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-danger">
+                        <i class="bi bi-gear-fill display-4"></i>
+                    </div>
+                    <h4 class="fw-bold">Administración</h4>
+                    <p class="text-muted">Configuración del sistema y usuarios.</p>
+                    <a href="{% url 'users:user_list' %}" class="btn btn-outline-danger fw-bold stretched-link">Panel
+                        Admin</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+</style>
+{% endblock %}
