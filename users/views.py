@@ -18,6 +18,8 @@ from .forms import (
 # ----------------------------------------------------------
 # LOGIN
 # ----------------------------------------------------------
+# In users/views.py, update the UserLoginView class:
+
 class UserLoginView(LoginView):
     template_name = "users/login.html"
     authentication_form = UserLoginForm
@@ -25,7 +27,7 @@ class UserLoginView(LoginView):
 
     def get_success_url(self):
         messages.success(self.request, "Inicio de sesión exitoso")
-        return reverse_lazy("users:profile")
+        return reverse_lazy("users:dashboard")  # Changed from "users:profile" to "users:dashboard"
 
 
 # ----------------------------------------------------------
@@ -70,10 +72,16 @@ def activate_account(request, user_id):
 # ----------------------------------------------------------
 class UserProfileView(LoginRequiredMixin, DetailView):
     model = CustomUser
-    template_name = "users/profile.html"
+    template_name = 'users/profile.html'
+    context_object_name = 'user_profile'
 
     def get_object(self):
         return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user  # Make sure user is in context
+        return context
 
 
 # ----------------------------------------------------------
@@ -100,12 +108,18 @@ class UserListView(LoginRequiredMixin, ListView):
     model = CustomUser
     template_name = "users/user_list.html"
     context_object_name = "users"
+    paginate_by = 10  # 10 usuarios por página
+    ordering = ['-date_joined']  # Ordenar por fecha de registro descendente
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_admin:
             messages.error(request, "No tienes permisos para ver esta sección.")
             return redirect("users:profile")
         return super().dispatch(request, *args, **kwargs)
+        
+    def get_queryset(self):
+        # Filtrar usuarios activos y ordenar
+        return CustomUser.objects.filter(is_active=True).order_by('-date_joined')
 
 
 # ----------------------------------------------------------
@@ -142,3 +156,67 @@ class ResetPasswordConfirmView(PasswordResetConfirmView):
 # ----------------------------------------------------------
 class UserDashboardView(LoginRequiredMixin, TemplateView):
     template_name = "users/dashboard.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Define modules for each role
+        role_modules = {
+            'admin': [
+                {'name': 'Usuarios', 'icon': 'bi-people', 'url': 'users:user_list'},
+                {'name': 'Configuración', 'icon': 'bi-gear', 'url': '#'},
+                {'name': 'Reportes', 'icon': 'bi-graph-up', 'url': '#'},
+            ],
+            'empresa': [
+                {'name': 'Mis Empresas', 'icon': 'bi-building', 'url': '#'},
+                {'name': 'Proyectos', 'icon': 'bi-kanban', 'url': '#'},
+                {'name': 'Reportes', 'icon': 'bi-graph-up', 'url': '#'},
+            ],
+            'instructor': [
+                {'name': 'Mis Cursos', 'icon': 'bi-journal-bookmark', 'url': '#'},
+                {'name': 'Calificaciones', 'icon': 'bi-star', 'url': '#'},
+                {'name': 'Asistencia', 'icon': 'bi-calendar-check', 'url': '#'},
+            ],
+            'aprendiz': [
+                {'name': 'Mi Aprendizaje', 'icon': 'bi-mortarboard', 'url': '#'},
+                {'name': 'Mis Cursos', 'icon': 'bi-journal-bookmark', 'url': '#'},
+                {'name': 'Progreso', 'icon': 'bi-graph-up', 'url': '#'},
+            ]
+        }
+        
+        # Add modules based on user role
+        context['role_modules'] = role_modules.get(self.request.user.rol, [])
+        return context
+class UserDashboardView(LoginRequiredMixin, TemplateView):
+    template_name = "users/dashboard.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Define modules for each role with valid URLs or None
+        role_modules = {
+            'admin': [
+                {'name': 'Usuarios', 'icon': 'bi-people', 'url': 'users:user_list'},
+                {'name': 'Configuración', 'icon': 'bi-gear', 'url': None},
+                {'name': 'Reportes', 'icon': 'bi-graph-up', 'url': None},
+            ],
+            'empresa': [
+                {'name': 'Mis Empresas', 'icon': 'bi-building', 'url': None},
+                {'name': 'Proyectos', 'icon': 'bi-kanban', 'url': None},
+                {'name': 'Reportes', 'icon': 'bi-graph-up', 'url': None},
+            ],
+            'instructor': [
+                {'name': 'Mis Cursos', 'icon': 'bi-journal-bookmark', 'url': None},
+                {'name': 'Calificaciones', 'icon': 'bi-star', 'url': None},
+                {'name': 'Asistencia', 'icon': 'bi-calendar-check', 'url': None},
+            ],
+            'aprendiz': [
+                {'name': 'Mi Aprendizaje', 'icon': 'bi-mortarboard', 'url': None},
+                {'name': 'Mis Cursos', 'icon': 'bi-journal-bookmark', 'url': None},
+                {'name': 'Progreso', 'icon': 'bi-graph-up', 'url': None},
+            ]
+        }
+        
+        # Add modules based on user role
+        context['role_modules'] = role_modules.get(self.request.user.rol, [])
+        return context

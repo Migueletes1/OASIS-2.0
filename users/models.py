@@ -1,12 +1,19 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser     # ← IMPORTANTE
+from django.contrib.auth.models import AbstractUser 
+from django.contrib.auth.models import AbstractUser, UserManager# ← IMPORTANTE
+
+class CustomUserManager(UserManager):
+    def create_superuser(self, username, email=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('rol', 'admin')  # Ensure superusers are admins
+        return super().create_superuser(username, email, password, **extra_fields)
 
 class CustomUser(AbstractUser):
+    objects = CustomUserManager()
     fullname = models.CharField(max_length=150, blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
 
-    def __str__(self):
-        return self.username
     TIPO_DOCUMENTO_CHOICES = [
         ('CC', 'Cédula de ciudadanía'),
         ('TI', 'Tarjeta de identidad'),
@@ -39,6 +46,10 @@ class CustomUser(AbstractUser):
         default='activo'
     )
 
+    @property
+    def is_admin(self):
+        return self.rol == 'admin'
+
     def __str__(self):
         return f"{self.username} ({self.rol})"
 
@@ -58,7 +69,9 @@ class AuditLog(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.action} - {self.module} - {self.timestamp}"
+        if hasattr(self, 'user') and self.user:
+            return f"{self.action} - {self.module} - {self.timestamp} - {self.user.username} ({self.user.rol})"
+        return f"{self.action} - {self.module} - {self.timestamp} - Usuario no disponible"
 
 
 

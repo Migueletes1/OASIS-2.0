@@ -34,34 +34,54 @@
                                     <img src="{{ user_item.avatar.url }}" class="rounded-circle me-3" width="40"
                                         height="40" style="object-fit: cover;">
                                     {% else %}
-                                    <img src="{% static 'img/default-avatar.png' %}" class="rounded-circle me-3"
-                                        width="40" height="40" style="object-fit: cover;">
+                                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3" 
+                                         style="width: 40px; height: 40px;">
+                                        <i class="bi bi-person-fill text-muted"></i>
+                                    </div>
                                     {% endif %}
                                     <div>
-                                        <div class="fw-bold">{{ user_item.fullname }}</div>
-                                        <div class="text-muted small">{{ user_item.email }}</div>
+                                        <div class="fw-bold">{{ user_item.get_full_name|default:user_item.username }}</div>
+                                        <div class="text-muted small">{{ user_item.email|default:"Sin correo" }}</div>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-info text-dark">{{ user_item.get_role_display }}</span>
+                                {% if user_item.rol %}
+                                    {% if user_item.rol == 'admin' %}
+                                        <span class="badge bg-danger bg-opacity-10 text-danger">Administrador</span>
+                                    {% elif user_item.rol == 'empresa' %}
+                                        <span class="badge bg-primary bg-opacity-10 text-primary">Empresa</span>
+                                    {% elif user_item.rol == 'instructor' %}
+                                        <span class="badge bg-info bg-opacity-10 text-info">Instructor</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary">Aprendiz</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="badge bg-light text-muted">Sin rol</span>
+                                {% endif %}
                             </td>
                             <td>
                                 {% if user_item.is_active %}
-                                <span
-                                    class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Activo</span>
+                                <span class="badge bg-success bg-opacity-10 text-success">Activo</span>
                                 {% else %}
-                                <span
-                                    class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill">Inactivo</span>
+                                <span class="badge bg-danger bg-opacity-10 text-danger">Inactivo</span>
                                 {% endif %}
                             </td>
-                            <td class="text-muted">{{ user_item.date_joined|date:"d M Y" }}</td>
+                            <td class="text-muted">{{ user_item.date_joined|date:"d M Y"|default:"-" }}</td>
                             <td class="text-end pe-4">
-                                <a href="{% url 'users:user_detail' user_item.pk %}"
-                                    class="btn btn-sm btn-outline-primary" title="Ver Detalle">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                                <!-- Aquí se podrían agregar más acciones como editar o eliminar si existieran las vistas -->
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'users:user_detail' user_item.pk %}"
+                                        class="btn btn-sm btn-outline-primary" title="Ver Detalle">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    {% if user.is_admin %}
+                                    <a href="#" 
+                                       class="btn btn-sm btn-outline-secondary" 
+                                       title="Editar Usuario">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
                             </td>
                         </tr>
                         {% empty %}
@@ -77,29 +97,45 @@
             </div>
         </div>
 
-        <!-- Paginación si fuera necesaria (ListView la soporta si se configura paginate_by) -->
+        <!-- Paginación -->
         {% if is_paginated %}
         <div class="card-footer bg-white py-3">
-            <nav>
-                <ul class="pagination justify-content-center mb-0">
-                    {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
-                    </li>
-                    {% endif %}
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted small">
+                    Mostrando {{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ page_obj.paginator.count }} usuarios
+                </div>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
 
-                    <li class="page-item disabled">
-                        <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages
-                            }}</span>
-                    </li>
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
 
-                    {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </nav>
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
         </div>
         {% endif %}
     </div>

@@ -6,19 +6,57 @@
         </button>
         <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" href="{% url 'projects:project_list' %}">Proyectos</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'apprentices:list' %}">Aprendices</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'companies:company_list' %}">Empresas</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'assignments:list' %}">Asignaciones</a></li>
+                {% if user.is_authenticated %}
+                    <!-- Menú para Usuarios Autenticados -->
+                    {% if user.rol == 'admin' %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'projects:project_list' %}">Proyectos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'apprentices:list' %}">Aprendices</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'companies:company_list' %}">Empresas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'assignments:list' %}">Asignaciones</a></li>
+                    {% elif user.rol == 'empresa' %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'projects:project_list' %}">Mis Proyectos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'apprentices:list' %}">Aprendices</a></li>
+                    {% elif user.rol == 'instructor' %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'projects:project_list' %}">Proyectos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'apprentices:list' %}">Aprendices</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'assignments:list' %}">Asignaciones</a></li>
+                    {% elif user.rol == 'aprendiz' %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'projects:project_list' %}">Mis Proyectos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'assignments:list' %}">Mis Tareas</a></li>
+                    {% endif %}
+                {% endif %}
             </ul>
             <ul class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'notifications:notification_center' %}"><i class="bi bi-bell"></i></a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'users:profile' %}">{{ user.get_full_name|default:user.username }}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'users:logout' %}">Salir</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'notifications:notification_center' %}">
+                            <i class="bi bi-bell"></i>
+                            {% if user.unread_notifications.count > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ user.unread_notifications.count }}
+                                </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ user.get_full_name|default:user.username }}
+                            <small class="text-light">({{ user.get_rol_display }})</small>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{% url 'users:profile' %}">Mi Perfil</a></li>
+                            <li><a class="dropdown-item" href="{% url 'users:dashboard' %}">Panel de Control</a></li>
+                            {% if user.rol == 'admin' %}
+                                <li><a class="dropdown-item" href="{% url 'users:user_list' %}">Gestión de Usuarios</a></li>
+                                <li><a class="dropdown-item" href="{% url 'admin:index' %}">Administración</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'users:logout' %}">Cerrar Sesión</a></li>
+                        </ul>
+                    </li>
                 {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'users:login' %}">Ingresar</a></li>
-                    <li class="nav-item"><a class="btn btn-light btn-sm" href="{% url 'users:register' %}">Registrarse</a></li>
+                    <li class="nav-item"><a class="btn btn-light btn-sm ms-2" href="{% url 'users:register' %}">Registrarse</a></li>
                 {% endif %}
             </ul>
         </div>
