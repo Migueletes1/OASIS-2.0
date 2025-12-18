@@ -20,3 +20,8 @@ def search_results(request):
         "results": [],
     }
     return render(request, "search_results.html", context)
+def landing_page(request):
+    return render(request, "landing.html", {
+        "delay": "1s"
+    })
+
